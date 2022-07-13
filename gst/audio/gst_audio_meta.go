@@ -8,7 +8,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/tinyzimmer/go-gst/gst"
+	"github.com/broadcastervc/go-gst/gst"
 )
 
 type AudioMeta struct {

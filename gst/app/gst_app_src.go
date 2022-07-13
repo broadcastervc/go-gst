@@ -21,9 +21,9 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/broadcastervc/go-gst/gst"
+	"github.com/broadcastervc/go-gst/gst/base"
 	gopointer "github.com/mattn/go-pointer"
-	"github.com/tinyzimmer/go-gst/gst"
-	"github.com/tinyzimmer/go-gst/gst/base"
 )
 
 // SourceCallbacks represents callbacks to configure on an AppSource.

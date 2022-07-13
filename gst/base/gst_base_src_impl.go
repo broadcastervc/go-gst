@@ -51,8 +51,8 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/broadcastervc/go-gst/gst"
 	"github.com/tinyzimmer/go-glib/glib"
-	"github.com/tinyzimmer/go-gst/gst"
 )
 
 var (

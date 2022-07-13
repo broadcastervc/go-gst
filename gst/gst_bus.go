@@ -43,7 +43,7 @@ type Bus struct {
 //   import (
 //       "fmt"
 //
-//       "github.com/tinyzimmer/go-gst/gst"
+//       "github.com/broadcastervc/go-gst/gst"
 //   )
 //
 //   func main() {
