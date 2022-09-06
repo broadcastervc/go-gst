@@ -88,6 +88,18 @@ func ElementLinkMany(elems ...*Element) error {
 	return nil
 }
 
+// ElementUnlinkMany is a go implementation of `gst_element_unlink_many` to compensate for
+// no variadic functions in cgo.
+func ElementUnlinkMany(elems ...*Element) {
+	for idx, elem := range elems {
+		if idx == 0 {
+			// skip the first one as the loop always links previous to current
+			continue
+		}
+		elems[idx-1].Unlink(elem)
+	}
+}
+
 // RegisterElement creates a new elementfactory capable of instantiating objects of the given GoElement
 // and adds the factory to the plugin. A higher rank means more importance when autoplugging.
 func RegisterElement(plugin *Plugin, name string, rank Rank, elem glib.GoObjectSubclass, extends glib.Extendable, interfaces ...glib.Interface) bool {
@@ -358,6 +370,10 @@ func (e *Element) Link(elem *Element) error {
 	return nil
 }
 
+func (e *Element) Unlink(elem *Element) {
+	C.gst_element_unlink((*C.GstElement)(e.Instance()), (*C.GstElement)(elem.Instance()))
+}
+
 // LinkFiltered wraps gst_element_link_filtered and link this element to the given one
 // using the provided sink caps.
 func (e *Element) LinkFiltered(elem *Element, filter *Caps) error {
@@ -499,15 +515,16 @@ func (e *Element) RemovePad(pad *Pad) bool {
 // For example, audiomixer has sink template, 'sink_%u', which is used for creating multiple sink pads on demand so that it performs mixing of audio streams by linking multiple upstream elements on it's sink pads created on demand.
 // This returns the request pad created on demand. Otherwise, it returns null if failed to create.
 func (e *Element) GetRequestPad(name string) *Pad {
-       cname := C.CString(name)
-       defer C.free(unsafe.Pointer(cname))
-       pad := C.gst_element_get_request_pad(e.Instance(), (*C.gchar)(unsafe.Pointer(cname)))
-       if pad == nil {
-               return nil
-       }
-       return FromGstPadUnsafeFull(unsafe.Pointer(pad))
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	pad := C.gst_element_get_request_pad(e.Instance(), (*C.gchar)(unsafe.Pointer(cname)))
+	if pad == nil {
+		return nil
+	}
+	return FromGstPadUnsafeFull(unsafe.Pointer(pad))
 }
+
 // ReleaseRequestPad releases request pad
 func (e *Element) ReleaseRequestPad(pad *Pad) {
-       C.gst_element_release_request_pad(e.Instance(), pad.Instance())
+	C.gst_element_release_request_pad(e.Instance(), pad.Instance())
 }
